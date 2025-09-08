@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WebSocket Client</title>
+  </head>
+  <body>
+    <h1>WebSocket Test</h1>
+
+    <!-- Button to send a move -->
+    <button id="sendMoveBtn">Send Move</button>
+
+    <script>
+      // Connect to WebSocket server
+      const ws = new WebSocket("ws://localhost:8080");
+
+      ws.onopen = () => {
+        console.log("Connected to WebSocket server");
+      };
+
+      ws.onmessage = event => {
+        console.log("Message from server:", event.data);
+      };
+
+      ws.onclose = () => {
+        console.log("Disconnected from server");
+      };
+
+      ws.onerror = err => {
+        console.error("WebSocket error:", err);
+      };
+
+      // Button click handler
+      const button = document.getElementById("sendMoveBtn");
+      button.addEventListener("click", () => {
+        const data = {
+          roomId: 0,
+          password: "0kUsdCt",
+          move: "abc123",
+          init: true
+        };
+
+        // Send object as JSON string
+        ws.send(JSON.stringify(data));
+        console.log("Sent data on button click:", data);
+      });
+    </script>
+  </body>
+</html>

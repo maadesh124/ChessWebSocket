@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WebSocket Client</title>
+    <style>
+      label {
+        display: block;
+        margin: 5px 0;
+      }
+      input {
+        margin-bottom: 10px;
+        width: 200px;
+      }
+      button {
+        margin-right: 10px;
+        padding: 5px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WebSocket Test</h1>
+
+    <!-- Inputs -->
+    <label>
+      Room ID:
+      <input type="text" id="roomId" value="" />
+    </label>
+    <label>
+      Move:
+      <input type="text" id="move" value="" />
+    </label>
+
+    <!-- Buttons -->
+    <button id="initializeBtn">Initialize</button>
+    <button id="sendMoveBtn">Send Move</button>
+
+    <script>
+      const ws = new WebSocket("ws://localhost:8080");
+
+      ws.onopen = () => console.log("Connected to WebSocket server");
+      ws.onmessage = event => console.log("Message from server:", event.data);
+      ws.onclose = () => console.log("Disconnected from server");
+      ws.onerror = err => console.error("WebSocket error:", err);
+
+      // Helper to get roomId as string
+      function getRoomId() {
+        return document.getElementById("roomId").value.trim();
+      }
+
+      // Initialize button
+      document.getElementById("initializeBtn").addEventListener("click", () => {
+        const roomId = getRoomId();
+        if (!roomId) return alert("Enter a Room ID");
+        const data = { roomId, join: true };
+        ws.send(JSON.stringify(data));
+        console.log("Sent initialize:", data);
+      });
+
+      // Send Move button
+      document.getElementById("sendMoveBtn").addEventListener("click", () => {
+        const roomId = getRoomId();
+        const move = document.getElementById("move").value.trim();
+        if (!roomId) return alert("Enter a Room ID");
+        const data = { roomId, move };
+        ws.send(JSON.stringify(data));
+        console.log("Sent move:", data);
+      });
+    </script>
+  </body>
+</html>
