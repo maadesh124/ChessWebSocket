@@ -18,37 +18,41 @@ class RoomManager {
 
   joinRoom(roomId, ws) {
     if (!this.rooms.has(roomId)) {
-      ws.send("Invalid Room");
+      ws.send(JSON.stringify({ mess: "Invalid Room" }));
       return;
     }
 
     const room = this.rooms.get(roomId);
 
     if (room.length >= 2) {
-      ws.send("Room Full");
+      ws.send(JSON.stringify({ mess: "RoomFull" }));
       return;
     }
 
     room.push(ws);
     if (room.length === 2) {
-      room[0].send("start");
-      room[1].send("start");
+      room[0].send(JSON.stringify({ start: true, color: 0 }));
+      room[1].send(JSON.stringify({ start: true, color: 1 }));
     }
   }
 
   leaveRoom(roomId, ws) {
     if (!this.rooms.has(roomId)) return;
     const room = this.rooms.get(roomId);
-    if (room.length > 1 && room[0] === ws) room[1].send("exit");
-    else if (room.length > 1 && room[1] === ws) room[0].send("exit");
+    if (room.length > 1 && room[0] === ws)
+      room[1].send(JSON.stringify({ mess: "exit" }));
+    else if (room.length > 1 && room[1] === ws)
+      room[0].send(JSON.stringify({ mess: "exit" }));
 
     this.rooms.delete(roomId);
   }
 
   dismiss(ws) {
     for (let [roomId, room] of this.rooms) {
-      if (room.length > 1 && room[0] === ws) room[1].send("exit");
-      else if (room.length > 1 && room[1] === ws) room[0].send("exit");
+      if (room.length > 1 && room[0] === ws)
+        room[1].send(JSON.stringify({ mess: "exit" }));
+      else if (room.length > 1 && room[1] === ws)
+        room[0].send(JSON.stringify({ mess: "exit" }));
       const index = room.indexOf(ws);
       if (index !== -1) this.rooms.delete(roomId);
     }
