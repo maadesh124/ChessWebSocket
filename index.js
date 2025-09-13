@@ -1,12 +1,13 @@
 const express = require("express");
 const WebSocket = require("ws");
 const { roomManager } = require("./src/RoomManager");
+const cors = require("cors");
 
 const app = express();
 
 // ✅ use Render-assigned port
-const PORT = process.env.PORT || 8080;
-
+const PORT = process.env.PORT || 8081;
+app.use(cors());
 const server = app.listen(PORT, () => {
   console.log(`✅ Server started on ${PORT}`);
   console.log(`http://localhost:${PORT}`);
